@@ -2,26 +2,15 @@ version: "3.9"
 
 services:
 
-  hello-world:
-    image: "traefik/whoami"
-    container_name: "simple-service"
+  minecraft:
+    image: itzg/minecraft-server
+    environment:
+      EULA: "true"
+      INIT_MEMORY: "512M"
+      MAX_MEMORY: "4G"
+      ENABLE_AUTOPAUSE: "true"
+    ports:
+      - "25565:25565"
+    volumes:
+      - ./minecraft:/data
     restart: unless-stopped
-    networks:
-      - traefik
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.simple-service.rule=Host(`hello-world.${BASE_DOMAIN:-ozeliurs.com}`)"
-      - "traefik.http.routers.simple-service.entrypoints=websecure"
-      - "traefik.http.routers.simple-service.tls=true"
-      - "traefik.http.routers.simple-service.tls.certresolver=cloudflare"
-      - "traefik.http.services.simple-service.loadbalancer.server.port=80"
-    healthcheck:
-      test: [ "CMD", "wget", "-q", "--spider", "http://localhost:80" ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-
-networks:
-  traefik:
-    external: true
